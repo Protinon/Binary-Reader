@@ -1,0 +1,80 @@
+#pragma once
+
+#include "BinaryReaderBase.h"
+#include "BinaryReaderFile.h"
+#include "BinaryReaderBuffered.h"
+#include "Exceptions.h"
+
+#include <vector>
+#include <cstdint>
+#include <string>
+#include <cmath>
+#include <fstream>
+#include <memory>
+#include <bitset>
+#include <iostream>
+#include <cfloat>
+
+static const std::string SOURCE_DIR = R"###(@CMAKE_CURRENT_SOURCE_DIR@)###";
+static const std::string PATH_SEP = R"###(@PLATFORM_PATH_SEP@)###";
+static const std::string TEST_DIR = SOURCE_DIR + PATH_SEP + "data";
+
+static const std::vector<uint8_t> uint8Data = { 0, 1, 2, 3, 4, 127,  128,  129,  130,  131, 251, 252, 253, 254, 255 };
+static const std::vector<int8_t> int8Data = { 0, 1, 2, 3, 4, 127, -128, -127, -126, -125, -5, -4, -3, -2, -1 };
+static const std::vector<uint16_t> uint16Data = { 0, 1, 2, 3, 4, 32767, 32768, 32769, 32770, 32771, 65531, 65532, 65533, 65534, 65535 };
+static const std::vector<int16_t> int16Data = { 0, 1, 2, 3, 4, 32767, -32768, -32767, -32766, -32765, -5, -4, -3, -2, -1 };
+static const std::vector<uint32_t> uint32Data = { 0, 1, 2, 3, 4, 2147483647, 2147483648, 2147483649, 2147483650, 2147483651, 4294967291, 4294967292, 4294967293, 4294967294, 4294967295 };
+static const std::vector<int32_t> int32Data = { 0, 1, 2, 3, 4, 2147483647, -2147483647 - 1, -2147483647, -2147483646, -2147483645, -5, -4, -3, -2, -1 };
+static const std::vector<uint64_t> uint64Data = { 0, 1, 2, 3, 4, 9223372036854775807ULL, 9223372036854775808ULL, 9223372036854775809ULL, 9223372036854775810ULL, 9223372036854775811ULL, 18446744073709551611ULL, 18446744073709551612ULL, 18446744073709551613ULL, 18446744073709551614ULL, 18446744073709551615ULL };
+static const std::vector<int64_t> int64Data = { 0, 1, 2, 3, 4, 9223372036854775807LL, -9223372036854775807LL - 1, -9223372036854775807LL, -9223372036854775806LL, -9223372036854775805LL, -5, -4, -3, -2, -1 };
+
+/* Float tests
+*  0
+*  -0
+*  1.0
+*  -2.0
+*  Smallest positive normal number
+*  Largest positive normal number
+*  Smallest positive subnormal number
+*  Largest subnormal number
+*  Infinity
+*  Negative infinity
+*/
+//static const std::vector<float> halfFloatData = { 0, -0, 1.0F, -2.0F, 0.000000059604645F, 0.000060975552F, 0.00006103515625F, 65504.0F, std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity() };
+//static const std::vector<float> floatData = { 0, -0, 1.0F, -2.0F, 1.4012984643e-45, 1.1754942107e-38, 1.1754943508e-38, 3.4028234664e38, std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity() };
+//static const std::vector<double> doubleData = { 0, -0, 1.0F, -2.0F, 4.9406564584124654e-324, 2.2250738585072009e-308, 2.2250738585072014e-308, 1.7976931348623157e308, std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity() };
+static const std::vector<float> halfFloatData = { 0, -0, 1.0F, -2.0F, 0.00006103515625F, 65504.0F, 0.000000059604645F, 0.000060975552F, std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity() };
+static const std::vector<float> floatData = { 0, -0, 1.0F, -2.0F, 1.1754943508e-38F, 3.4028234664e38F, 1.4012984643e-45F, 1.1754942107e-38F, std::numeric_limits<float>::infinity(), -std::numeric_limits<float>::infinity() };
+static const std::vector<double> doubleData = { 0, -0, 1.0, -2.0, 2.2250738585072014e-308, 1.7976931348623157e308, 4.9406564584124654e-324, 2.2250738585072009e-308, std::numeric_limits<double>::infinity(), -std::numeric_limits<double>::infinity() };
+
+static const std::vector<float> nonNormalFloats = { 0.0F, 1.4012984643e-45F, std::numeric_limits<float>::infinity(), std::numeric_limits<float>::quiet_NaN() };
+
+static const std::string strTest = R"###(!"#$ % &'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~)###";
+
+
+using bReaderTestTypes = std::tuple<BinaryReaderFile, BinaryReaderBuffered>;
+
+template <typename T>
+std::unique_ptr<BinaryReaderBase> prepareReader(std::string filepath)
+{
+    return nullptr;
+}
+
+template <>
+inline std::unique_ptr<BinaryReaderBase> prepareReader<BinaryReaderFile>(std::string filepath)
+{
+    return std::make_unique<BinaryReaderFile>(filepath);
+}
+
+template <>
+inline std::unique_ptr<BinaryReaderBase> prepareReader<BinaryReaderBuffered>(std::string filepath)
+{
+    std::ifstream infile(filepath);
+    infile.seekg(0, std::ios::end);
+    size_t byteLen = infile.tellg();
+    infile.seekg(0, std::ios::beg);
+
+    uint8_t* buffer = new uint8_t[byteLen];
+    infile.read((char*)buffer, byteLen);
+    return std::make_unique<BinaryReaderBuffered>(buffer, byteLen);
+}
