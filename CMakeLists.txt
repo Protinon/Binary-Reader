@@ -1,6 +1,6 @@
+cmake_minimum_required(VERSION 3.18)
 project(Binary-Reader)
 
-cmake_minimum_required(VERSION 3.18)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
@@ -10,10 +10,19 @@ elseif(UNIX)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -Wall")
 endif()
 
-add_subdirectory(src/)
-add_subdirectory(test/)
+set(
+	BINARY_READER_SOURCES 
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/BinaryReaderBase.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/BinaryReaderFile.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/BinaryReaderBuffered.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/src/BinaryReaderExceptions.cpp"
+)
+set(CMAKE_STATIC_LIBRARY_PREFIX "")
+add_library(Binary-Reader STATIC ${BINARY_READER_SOURCES})
+target_include_directories(Binary-Reader PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 # Test
+add_subdirectory(test/)
 enable_testing()
 target_link_libraries(Binary-Reader-Test PRIVATE Binary-Reader)
 add_test(NAME Binary-Reader-Test COMMAND Binary-Reader-test Binary-Reader)

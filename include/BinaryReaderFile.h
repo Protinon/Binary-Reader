@@ -1,7 +1,7 @@
 #pragma once
 
 #include "BinaryReaderBuffered.h"
-#include "Exceptions.h"
+#include "BinaryReaderExceptions.h"
 #include "BinaryReaderBase.h"
 
 #include <fstream>

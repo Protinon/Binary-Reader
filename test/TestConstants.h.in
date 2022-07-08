@@ -3,7 +3,7 @@
 #include "BinaryReaderBase.h"
 #include "BinaryReaderFile.h"
 #include "BinaryReaderBuffered.h"
-#include "Exceptions.h"
+#include "BinaryReaderExceptions.h"
 
 #include <vector>
 #include <cstdint>

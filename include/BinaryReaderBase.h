@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Exceptions.h"
+#include "BinaryReaderExceptions.h"
 
 #include <fstream>
 #include <cstdint>

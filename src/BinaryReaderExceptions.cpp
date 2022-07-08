@@ -1,4 +1,4 @@
-#include "Exceptions.h"
+#include "BinaryReaderExceptions.h"
 
 LimitException::LimitException(uint64_t value, uint64_t limit, const std::string& msg)
     : runtime_error("Limit (" + std::to_string(limit) + ") hit: " + std::to_string(value) + " \"" + msg + "\"")
