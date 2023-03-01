@@ -577,7 +577,7 @@ std::string
 BinaryReaderBase::readAsciiString(size_t len)
 {
 	char* buffer = (char*)readUInt8Array(len);
-	std::string data = std::string(buffer);
+	std::string data = std::string(buffer, len);
 	delete[] buffer;
 	return data;
 }
