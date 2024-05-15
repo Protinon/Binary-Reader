@@ -21,8 +21,8 @@ set(CMAKE_STATIC_LIBRARY_PREFIX "")
 add_library(Binary-Reader STATIC ${BINARY_READER_SOURCES})
 target_include_directories(Binary-Reader PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
-# Test
-add_subdirectory(test/)
-enable_testing()
-target_link_libraries(Binary-Reader-Test PRIVATE Binary-Reader)
-add_test(NAME Binary-Reader-Test COMMAND Binary-Reader-test Binary-Reader)
+option(BINARY_READER_BUILD_TEST OFF)
+if(BINARY_READER_BUILD_TEST)
+	add_subdirectory(test/)
+	target_link_libraries(Binary-Reader-Test PRIVATE Binary-Reader)
+endif()
